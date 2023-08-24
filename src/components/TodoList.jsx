@@ -14,7 +14,6 @@ TodoList.propTypes = {
     cancelEdit: PropTypes.func.isRequired,
     deleteTodo: PropTypes.func.isRequired,
     remaining: PropTypes.func.isRequired,
-    remaining: PropTypes.func.isRequired,
     clearCompleted: PropTypes.func.isRequired,
     completeAllTodos: PropTypes.func.isRequired,
     todosFiltered: PropTypes.func.isRequired,
