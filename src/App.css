@@ -228,3 +228,7 @@ nav ul li:not(:first-child) {
   transition: all 300ms;
   transform: translateX(20px);
 }
+
+.name-container {
+  margin-bottom: 40px;
+}

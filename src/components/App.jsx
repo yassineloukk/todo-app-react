@@ -1,4 +1,4 @@
-import {useState} from 'react';
+import {useEffect, useMemo, useRef, useState} from 'react';
 import '../reset.css';
 import '../App.css';
 import NoTodos from './NoTodos';
@@ -27,9 +27,11 @@ function App() {
         }
     ]);
 
-
     const [idForTodo, setIdForTodo] = useState(4);
 
+    const nameInputEl = useRef(null);
+    
+    const [name, setName] = useState('');
 
     function addTodo(todo) {
 
@@ -97,10 +99,12 @@ function App() {
         setTodos(updatedTodos);
     }
 
-    function remaining() {
+    function remainingCalculation() {
         return todos.filter(todo => !todo.isComplete).length;
     }
 
+    const remaining = useMemo(remainingCalculation, [todos]);
+    
     function clearCompleted() {
         setTodos([...todos].filter(todo => !todo.isComplete));
     }
@@ -124,9 +128,24 @@ function App() {
         }  
     }
 
+    useEffect(() => {
+        nameInputEl.current.focus()
+    }, []);
+
+
     return (
         <div className="todo-app-container">
             <div className="todo-app">
+                <div className="name-container">
+                    <h2>What is your name?</h2>
+                    <form action="#">
+                        <input type="text" className='todo-input' placeholder='What is your name?' value={name} onChange={event => setName(event.target.value)}  ref={nameInputEl}/>
+                    </form>
+                    {name &&
+                        <p className="name-label">Hello, {name}</p>
+                    }
+                </div>
+
                 <h2>Todo App</h2>
                 <TodoForm  addTodo={addTodo}/>
                 { todos.length > 0 ? <TodoList markAsEditing = {markAsEditing} completeTodo = {completeTodo} updateTodo = {updateTodo}  cancelEdit = {cancelEdit} deleteTodo = {deleteTodo} todos = {todos} remaining = {remaining} clearCompleted = {clearCompleted}  completeAllTodos = {completeAllTodos} todosFiltered = {todosFiltered}/> : <NoTodos />
