@@ -232,3 +232,7 @@ nav ul li:not(:first-child) {
 .name-container {
   margin-bottom: 40px;
 }
+
+.toggles-container {
+  margin: 20px 0;
+}
