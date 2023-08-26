@@ -7,6 +7,7 @@ import TodoList from './TodoList';
 import useLocalStorage from '../hooks/useLocalStorage';
 import { TodosContext } from '../context/TodosContext';
 import { FilterContext } from '../context/FilterContext';
+import { CSSTransition, SwitchTransition } from 'react-transition-group';
 
 function App() {
     const [todos, setTodos] = useLocalStorage("todos",[]);
@@ -48,15 +49,30 @@ function App() {
                         <form action="#">
                             <input type="text" className='todo-input' placeholder='What is your name?' value={name} onChange={handleNameInput}  ref={nameInputEl}/>
                         </form>
-                        {name &&
+                        <CSSTransition
+                            in = {name.length > 0}
+                            timeout = {300}
+                            classNames = "slide-vertical"
+                            unmountOnExit
+                        >                            
                             <p className="name-label">Hello, {name}</p>
-                        }
+                        </CSSTransition>
                     </div>
 
                     <h2>Todo App</h2>
                     <TodoForm />
                     <FilterContext.Provider value = {{  filter, setFilter, todosFiltered }}>
-                        { todos.length > 0 ? <TodoList /> : <NoTodos /> }
+                        <SwitchTransition mode='out-in'>
+                            <CSSTransition
+                                in = {todos.length > 0}
+                                timeout = {300}
+                                classNames = "slide-vertical"
+                                unmountOnExit
+                                key={todos.length > 0}
+                            >
+                                { todos.length > 0 ? <TodoList /> : <NoTodos /> }
+                            </CSSTransition>
+                        </SwitchTransition>
                     </FilterContext.Provider>
                 </div>
             </div>
