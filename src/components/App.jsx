@@ -42,39 +42,37 @@ function App() {
     
     return (
         <TodosContext.Provider value = {{ todos, setTodos, idForTodo, setIdForTodo }}>
-            <div className="todo-app-container">
-                <div className="todo-app">
-                    <div className="name-container">
-                        <h2>What is your name?</h2>
-                        <form action="#">
-                            <input type="text" className='todo-input' placeholder='What is your name?' value={name} onChange={handleNameInput}  ref={nameInputEl}/>
-                        </form>
+            <div className="todo-app">
+                <div className="name-container">
+                    <h2>What is your name?</h2>
+                    <form action="#">
+                        <input type="text" className='todo-input' placeholder='What is your name?' value={name} onChange={handleNameInput}  ref={nameInputEl}/>
+                    </form>
+                    <CSSTransition
+                        in = {name.length > 0}
+                        timeout = {300}
+                        classNames = "slide-vertical"
+                        unmountOnExit
+                    >                            
+                        <p className="name-label">Hello, {name}</p>
+                    </CSSTransition>
+                </div>
+                
+                <h2>Todo App</h2>
+                <TodoForm />
+                <FilterContext.Provider value = {{  filter, setFilter, todosFiltered }}>
+                    <SwitchTransition mode='out-in'>
                         <CSSTransition
-                            in = {name.length > 0}
+                            in = {todos.length > 0}
                             timeout = {300}
                             classNames = "slide-vertical"
                             unmountOnExit
-                        >                            
-                            <p className="name-label">Hello, {name}</p>
+                            key={todos.length > 0}
+                        >
+                            { todos.length > 0 ? <TodoList /> : <NoTodos /> }
                         </CSSTransition>
-                    </div>
-
-                    <h2>Todo App</h2>
-                    <TodoForm />
-                    <FilterContext.Provider value = {{  filter, setFilter, todosFiltered }}>
-                        <SwitchTransition mode='out-in'>
-                            <CSSTransition
-                                in = {todos.length > 0}
-                                timeout = {300}
-                                classNames = "slide-vertical"
-                                unmountOnExit
-                                key={todos.length > 0}
-                            >
-                                { todos.length > 0 ? <TodoList /> : <NoTodos /> }
-                            </CSSTransition>
-                        </SwitchTransition>
-                    </FilterContext.Provider>
-                </div>
+                    </SwitchTransition>
+                </FilterContext.Provider>
             </div>
         </TodosContext.Provider>
     );
