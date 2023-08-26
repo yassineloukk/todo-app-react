@@ -1,39 +1,81 @@
-import React, { useState } from 'react';
-import PropTypes from 'prop-types';
+import React, { useContext } from 'react';
 import TodoItemsRemaining from './TodoItemsRemaining';
 import TodoClearCompleted from './TodoClearCompleted';
 import TodoCompleteAll from './TodoCompleteAll';
 import TodoFilters from './TodoFilters';
 import useToggle from '../hooks/useToggle';
+import { TodosContext } from '../context/TodosContext';
+import { FilterContext } from '../context/FilterContext';
 
-
-TodoList.propTypes = {
-    todos: PropTypes.array.isRequired,
-    completeTodo: PropTypes.func.isRequired,
-    markAsEditing: PropTypes.func.isRequired,
-    updateTodo: PropTypes.func.isRequired,
-    cancelEdit: PropTypes.func.isRequired,
-    deleteTodo: PropTypes.func.isRequired,
-    remaining: PropTypes.number.isRequired,
-    clearCompleted: PropTypes.func.isRequired,
-    completeAllTodos: PropTypes.func.isRequired,
-    todosFiltered: PropTypes.func.isRequired,
-}
 
 function TodoList(props) {
     const [isFeaturesOneVisible, setFeaturesOneVisible] = useToggle();
-    const [isFeaturesTwoVisible, setFeaturesTwoVisible] = useToggle(false);
-    const [filter, setFilter] = useState('all');
+    const [isFeaturesTwoVisible, setFeaturesTwoVisible] = useToggle();
+    const { todos, setTodos } = useContext(TodosContext);
+    const { todosFiltered } = useContext(FilterContext);
+
+    function deleteTodo(todoId) {
+        setTodos([...todos.filter(todo => todo.id !== todoId)])
+    }
+
+    function completeTodo(todoId) {
+        const updatedTodos = todos.map(todo => {
+        if (todo.id === todoId) {
+            todo.isComplete = !todo.isComplete
+        }
+                return todo;
+        });
+
+        setTodos(updatedTodos);
+    }
+
+    function markAsEditing(todoId) {
+        const updatedTodos = todos.map(todo => {
+            if (todo.id === todoId) {
+                todo.isEditing = true
+            }
+                return todo;
+        });
+
+        setTodos(updatedTodos);
+    }
+
+    function updateTodo(event, todoId) {
+        const updatedTodos = todos.map(todo => {
+            if (todo.id === todoId) {
+                if (event.target.value.trim().length === 0) {
+                todo.isEditing = false;
+                return todo;
+            }
+                todo.title = event.target.value;
+                todo.isEditing = false;
+            }
+            return todo;
+        });
+
+        setTodos(updatedTodos);
+    }
+
+    function cancelEdit(event, todoId) {
+        const updatedTodos = todos.map(todo => {
+            if (todo.id === todoId) {
+                todo.isEditing = false
+            }
+            return todo;
+        });
+
+        setTodos(updatedTodos);
+    }
 
     return (
         <>
             <ul className="todo-list">
-                {props.todosFiltered(filter).map((todo, index) => (
+                {todosFiltered().map((todo, index) => (
                     <li className="todo-item-container" key={todo.id}>
                         <div className="todo-item">
-                            <input type="checkbox" onChange={()=> props.completeTodo(todo.id)} checked={todo.isComplete ? true : false}/>
+                            <input type="checkbox" onChange={()=> completeTodo(todo.id)} checked={todo.isComplete ? true : false}/>
                             {!todo.isEditing ? (
-                                <span onDoubleClick={()=> props.markAsEditing(todo.id)}
+                                <span onDoubleClick={()=> markAsEditing(todo.id)}
                                     className={`todo-item-label ${todo.isComplete
                                     ? 'line-through'
                                     : ''}`}>{todo.title}
@@ -42,17 +84,17 @@ function TodoList(props) {
                             : (
                                 <input type="text" className="todo-item-input" defaultValue={todo.title} 
                                 onBlur={(event)=>
-                                props.updateTodo(event, todo.id)}
+                                updateTodo(event, todo.id)}
                                 onKeyDown={event => {
                                     if (event.key === "Enter") {
-                                        props.updateTodo(event, todo.id)
+                                        updateTodo(event, todo.id)
                                     } else if (event.key === 'Escape') {
-                                        props.cancelEdit(event, todo.id)
+                                        cancelEdit(event, todo.id)
                                     }
                                 }} autoFocus/>
                             )}
                         </div>
-                        <button className="x-button" onClick={()=> props.deleteTodo(todo.id)}>
+                        <button className="x-button" onClick={()=> deleteTodo(todo.id)}>
                             <svg className="x-button-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                             </svg>
@@ -68,20 +110,17 @@ function TodoList(props) {
 
             {isFeaturesOneVisible && (
                 <div className="check-all-container">
-                    <TodoCompleteAll completeAllTodos = {props.completeAllTodos} />
+                    <TodoCompleteAll />
                     
-                    <TodoItemsRemaining remaining={props.remaining} />
+                    <TodoItemsRemaining />
                 </div>
             )}
 
             {isFeaturesTwoVisible && (
                 <div className="other-buttons-container">
-                <TodoFilters todosFiltered = {props.todosFiltered} 
-                    filter = {filter}
-                    setFilter = {setFilter}
-                />
+                <TodoFilters />
                     <div>
-                        <TodoClearCompleted clearCompleted = {props.clearCompleted} />
+                        <TodoClearCompleted />
                     </div>
                 </div>
             )}
