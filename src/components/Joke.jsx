@@ -3,25 +3,12 @@ import { ClipLoader } from 'react-spinners';
 import {TransitionGroup} from 'react-transition-group';
 import LoadingSpinner from './tsxFiles/LoadingSpinner';
 import { CSSTransition } from 'react-transition-group';
+import useFetch from '../hooks/useFetch';
 
 export default function Joke() {
-  const [joke,setJoke] = useState([]);
-  const [isLoading,setIsLoading] = useState(true);
-  let [errorMessage, setErrorMessage] = useState(null);
+  let url = 'https://official-joke-api.appspot.com/jokes/random';
 
-  useEffect(() => {
-      fetch('https://official-joke-api.appspot.com/jokes/random')
-          .then(response => response.json())
-          .then(result => {
-              setIsLoading(false);
-              setJoke(result);
-          })
-          .catch(error => {
-              setIsLoading(false);
-              setErrorMessage("There was an error.");
-          })
-  }, []);
-
+  const { data: joke, isLoading, errorMessage } = useFetch(url);
   return ( 
       <div className="todo-app">
           <div className="content">

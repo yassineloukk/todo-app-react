@@ -1,27 +1,13 @@
-import React, {useEffect, useState} from 'react'
-import { ClipLoader } from 'react-spinners';
+import React from 'react'
 import {TransitionGroup} from 'react-transition-group';
 import LoadingSpinner from './tsxFiles/LoadingSpinner';
 import { CSSTransition } from 'react-transition-group';
+import useFetch from '../hooks/useFetch';
 
 export default function Reddit() {
-    const [posts,setPosts] = useState([]);
-    const [isLoading,setIsLoading] = useState(true);
-    let [errorMessage, setErrorMessage] = useState(null);
+    let url = 'https://www.reddit.com/r/aww.json';
 
-    useEffect(() => {
-        fetch('https://www.reddit.com/r/aww.json')
-            .then(response => response.json())
-            .then(results => {
-                setIsLoading(false);
-                setPosts(results.data.children);
-            })
-            .catch(error => {
-                setIsLoading(false);
-                setErrorMessage("There was an error.");
-            })
-    }, []);
-
+    const { data: posts, isLoading, errorMessage } = useFetch(url);
     return ( 
         <div className="todo-app">
             <div className="content">
@@ -34,7 +20,7 @@ export default function Reddit() {
                         component='ul' 
                         className="todo-list"
                     >
-                        {posts.map(post => (
+                        {posts.data.children.map(post => (
                             <CSSTransition
                             key={post.data.id}
                             timeout={300}
