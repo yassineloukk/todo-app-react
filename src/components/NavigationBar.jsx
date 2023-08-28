@@ -17,6 +17,9 @@ function NavigationBar() {
                 <li>
                     <NavLink to="/blog" className={({isActive}) => (isActive ? "active" : 'none')}>Blog</NavLink>
                 </li>
+                <li>
+                    <NavLink to="/reddit-posts" className={({isActive}) => (isActive ? "active" : 'none')}>Reddit Posts</NavLink>
+                </li>
             </ul>
         </nav>
     )

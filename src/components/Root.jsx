@@ -7,6 +7,7 @@ import Blog from './pages/Blog'
 import BlogPost from './pages/BlogPost'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import NoMatch from './pages/NoMatch'
+import Toggle from './Toggle'
 
 export default function Root() {
   const routes = [
@@ -15,6 +16,7 @@ export default function Root() {
     { path: '/contact', name:'Contact', Component: Contact, exact:true },
     { path: '/blog', name:'Blog', Component: Blog, exact:true },
     { path: '/post/:id', name:'Post', Component: BlogPost, exact:true },
+    { path: '/reddit-posts', name:'Reddit Posts', Component: Toggle, exact:true },
     { path: '*', name:'No Match', Component: NoMatch, exact:true },
   ];
   return (

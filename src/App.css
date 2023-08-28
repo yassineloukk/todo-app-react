@@ -235,3 +235,9 @@ nav ul li:not(:first-child) {
 .toggles-container {
   margin: 20px 0;
 }
+
+.todo-item-label-reddit {
+  text-decoration: none;
+  color:gray;
+  font-weight: bold;
+}
