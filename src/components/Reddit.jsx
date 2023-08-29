@@ -3,11 +3,17 @@ import {TransitionGroup} from 'react-transition-group';
 import LoadingSpinner from './tsxFiles/LoadingSpinner';
 import { CSSTransition } from 'react-transition-group';
 import useFetch from '../hooks/useFetch';
+import { useQuery } from 'react-query';
 
 export default function Reddit() {
     let url = 'https://www.reddit.com/r/aww.json';
 
-    const { data: posts, isLoading, errorMessage } = useFetch(url);
+    const { data: posts, isLoading, isError, error, isSuccess} = useQuery('posts', fetchPosts);
+
+    function fetchPosts() {
+        return fetch(url).then(response => response.json());
+    }
+
     return ( 
         <div className="todo-app">
             <div className="content">
@@ -15,7 +21,7 @@ export default function Reddit() {
                 {isLoading && (
                     <LoadingSpinner isLoading = {isLoading}/>
                 )}
-                {posts && (
+                {isSuccess && (
                     <TransitionGroup 
                         component='ul' 
                         className="todo-list"
@@ -36,8 +42,8 @@ export default function Reddit() {
                         ))}
                     </TransitionGroup>
                 )}
-                {errorMessage && (
-                   <div>{errorMessage}</div>
+                {isError && (
+                   <div>{error.message}</div>
                 )}
             </div>
         </div>
